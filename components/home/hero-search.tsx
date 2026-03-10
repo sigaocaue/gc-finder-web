@@ -2,6 +2,7 @@
 
 import { useState, useCallback } from 'react'
 import { useQuery } from '@tanstack/react-query'
+import { motion, AnimatePresence } from 'framer-motion'
 import { toast } from 'sonner'
 import { api } from '@/lib/api'
 import { GcMapSection } from '@/components/map/gc-map-section'
@@ -58,15 +59,30 @@ export function HeroSearch() {
     <>
       <section className="bg-primary/5 py-16 sm:py-24">
         <div className="mx-auto max-w-7xl px-4 text-center sm:px-6 lg:px-8">
-          <h1 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl lg:text-5xl">
-            Encontre um <span className="block text-primary">Grupo de Crescimento</span>perto de
-            você
-          </h1>
-          <p className="mx-auto mt-4 max-w-2xl text-lg text-muted-foreground">
-            Descubra o GC mais próximo da sua casa e faça parte de uma comunidade que cresce junta.
-          </p>
-
-          <CepSearchBar onSearch={handleCepSearch} isLoading={isSearching} />
+          <motion.h1
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="font-display font-extrabold text-3xl sm:text-4xl lg:text-5xl text-foreground mb-4 leading-tight"
+          >
+            Encontre um <span className="text-primary">Grupo de Crescimento</span>
+            <br className="hidden sm:block" /> perto de você
+          </motion.h1>
+          <motion.p
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            className="text-muted-foreground text-base sm:text-lg mb-8 max-w-lg mx-auto"
+          >
+            Comunidade, acolhimento e crescimento espiritual pertinho da sua casa.
+          </motion.p>
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="flex justify-center"
+          >
+            <CepSearchBar onSearch={handleCepSearch} isLoading={isSearching} />
+          </motion.div>
         </div>
       </section>
 
