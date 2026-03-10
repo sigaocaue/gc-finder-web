@@ -56,12 +56,12 @@ httpClient.interceptors.response.use(
 
 async function refreshAccessToken(): Promise<boolean> {
   try {
-    const { data } = await axios.post<{ accessToken: string }>(
+    const { data } = await axios.post<{ data: { access_token: string } }>(
       `${httpClient.defaults.baseURL}/auth/refresh`,
       null,
       { withCredentials: true }
     );
-    accessToken = data.accessToken;
+    accessToken = data.data.access_token;
     return true;
   } catch {
     return false;

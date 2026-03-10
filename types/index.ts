@@ -73,8 +73,16 @@ export interface LoginCredentials {
   password: string;
 }
 
+export interface AuthTokensData {
+  access_token: string;
+  refresh_token: string;
+  token_type: string;
+  expires_in: number;
+}
+
 export interface AuthTokens {
-  accessToken: string;
+  data: AuthTokensData;
+  message: string;
 }
 
 export interface PaginatedResponse<T> {
