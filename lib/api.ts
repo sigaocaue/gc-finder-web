@@ -1,4 +1,10 @@
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001";
+import axios, { type AxiosRequestConfig } from "axios";
+
+const httpClient = axios.create({
+  baseURL: process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3000",
+  headers: { "Content-Type": "application/json" },
+  withCredentials: true,
+});
 
 // Armazena o access token em memória (nunca em localStorage)
 let accessToken: string | null = null;
@@ -11,71 +17,89 @@ export function getAccessToken(): string | null {
   return accessToken;
 }
 
-interface FetchOptions extends RequestInit {
-  authenticated?: boolean;
-}
-
-// Wrapper do fetch com suporte a autenticação e refresh automático
-export async function api<T>(
-  path: string,
-  options: FetchOptions = {}
-): Promise<T> {
-  const { authenticated = false, headers: customHeaders, ...rest } = options;
-
-  const headers: Record<string, string> = {
-    "Content-Type": "application/json",
-    ...(customHeaders as Record<string, string>),
-  };
-
-  if (authenticated && accessToken) {
-    headers["Authorization"] = `Bearer ${accessToken}`;
+// Injeta o Authorization header quando autenticado
+httpClient.interceptors.request.use((config) => {
+  if (config.headers.get("X-Authenticated") && accessToken) {
+    config.headers.set("Authorization", `Bearer ${accessToken}`);
   }
+  config.headers.delete("X-Authenticated");
+  return config;
+});
 
-  let response = await fetch(`${API_URL}${path}`, {
-    ...rest,
-    headers,
-    credentials: "include",
-  });
+// Interceptor de resposta: renova o token ao receber 401
+httpClient.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    const originalRequest = error.config as AxiosRequestConfig & {
+      _retried?: boolean;
+    };
 
-  // Tenta renovar o token se receber 401
-  if (response.status === 401 && authenticated) {
-    const refreshed = await refreshAccessToken();
-    if (refreshed) {
-      headers["Authorization"] = `Bearer ${accessToken}`;
-      response = await fetch(`${API_URL}${path}`, {
-        ...rest,
-        headers,
-        credentials: "include",
-      });
+    if (error.response?.status === 401 && !originalRequest._retried) {
+      originalRequest._retried = true;
+      const refreshed = await refreshAccessToken();
+
+      if (refreshed && originalRequest.headers) {
+        (originalRequest.headers as Record<string, string>)["Authorization"] =
+          `Bearer ${accessToken}`;
+        return httpClient(originalRequest);
+      }
     }
-  }
 
-  if (!response.ok) {
-    const error = await response.json().catch(() => ({}));
-    throw new ApiError(
-      (error as { message?: string }).message ?? "Erro na requisição",
-      response.status
-    );
-  }
+    const message =
+      (error.response?.data as { message?: string })?.message ??
+      "Erro na requisição";
+    const status = error.response?.status ?? 500;
 
-  return response.json() as Promise<T>;
-}
+    return Promise.reject(new ApiError(message, status));
+  }
+);
 
 async function refreshAccessToken(): Promise<boolean> {
   try {
-    const response = await fetch(`${API_URL}/auth/refresh`, {
-      method: "POST",
-      credentials: "include",
-    });
-
-    if (!response.ok) return false;
-
-    const data = (await response.json()) as { accessToken: string };
+    const { data } = await axios.post<{ accessToken: string }>(
+      `${httpClient.defaults.baseURL}/auth/refresh`,
+      null,
+      { withCredentials: true }
+    );
     accessToken = data.accessToken;
     return true;
   } catch {
     return false;
   }
+}
+
+interface ApiOptions extends AxiosRequestConfig {
+  authenticated?: boolean;
+  body?: string;
+}
+
+// Wrapper que mantém a mesma interface para os consumidores
+export async function api<T>(
+  path: string,
+  options: ApiOptions = {}
+): Promise<T> {
+  const { authenticated = false, ...config } = options;
+
+  if (authenticated) {
+    config.headers = {
+      ...config.headers,
+      "X-Authenticated": "true",
+    };
+  }
+
+  // Converte body (padrão fetch) para data (padrão axios)
+  if ("body" in config) {
+    const { body, ...rest } = config as ApiOptions & { body?: string };
+    const response = await httpClient.request<T>({
+      url: path,
+      data: body ? JSON.parse(body) : undefined,
+      ...rest,
+    });
+    return response.data;
+  }
+
+  const response = await httpClient.request<T>({ url: path, ...config });
+  return response.data;
 }
 
 export class ApiError extends Error {
