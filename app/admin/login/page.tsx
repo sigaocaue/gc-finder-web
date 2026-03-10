@@ -32,6 +32,11 @@ export default function AdminLoginPage() {
         method: "POST",
         body: JSON.stringify(data),
       });
+      if (!response.data) {
+        toast.error("Resposta inválida do servidor");
+        return;
+      }
+
       setAccessToken(response.data.access_token);
 
       // Salva o refresh token como cookie para o middleware validar a sessão

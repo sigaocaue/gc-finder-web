@@ -1,6 +1,6 @@
-// Resposta padrão da API: { data: T, message: string }
+// Resposta padrão da API: { data: T | null, message: string }
 export interface ApiResponse<T> {
-  data: T;
+  data: T | null;
   message: string;
 }
 
@@ -38,7 +38,7 @@ export interface GcResponse {
 }
 
 // Contato do líder
-export interface LeaderContact {
+export interface LeaderContactResponse {
   id: string;
   type: string;
   value: string;
@@ -53,58 +53,86 @@ export interface LeaderResponse {
   bio: string | null;
   photo_url: string | null;
   is_active: boolean;
-  contacts: LeaderContact[];
+  contacts: LeaderContactResponse[];
   created_at: string;
 }
 
-// Encontro de GC
-export interface GcMeeting {
+// Resumo do líder no detalhe do GC
+export interface LeaderBrief {
   id: string;
-  day_of_week: string;
-  time: string;
+  name: string;
+  contacts: LeaderContactResponse[];
+  is_primary: boolean;
+}
+
+// Encontro de GC
+export interface GcMeetingResponse {
+  id: string;
+  gc_id: string;
+  weekday: number;
+  start_time: string;
   notes: string | null;
+  created_at: string;
 }
 
 // Mídia de GC
-export interface GcMedia {
+export interface GcMediaResponse {
   id: string;
-  type: "image" | "instagram" | "video";
+  gc_id: string;
+  type: string;
   url: string;
   caption: string | null;
-  order: number;
+  display_order: number;
+  created_at: string;
 }
 
 // GET /api/v1/gcs/{id} (detalhe)
 export interface GcDetailResponse extends GcResponse {
-  leaders: LeaderResponse[];
-  meetings: GcMeeting[];
-  medias: GcMedia[];
+  leaders: LeaderBrief[];
+  meetings: GcMeetingResponse[];
+  medias: GcMediaResponse[];
 }
 
 // POST /api/v1/public/interest
-export interface InterestFormData {
+export interface InterestRequest {
   name: string;
   email: string;
   phone: string;
   zip_code: string;
-  message?: string;
-  gc_id?: string;
+  message?: string | null;
 }
 
-// Autenticação
-export interface LoginCredentials {
+// POST /api/v1/auth/login
+export interface LoginRequest {
   email: string;
   password: string;
 }
 
-export interface AuthTokensData {
+// POST /api/v1/auth/refresh
+export interface RefreshRequest {
+  refresh_token: string;
+}
+
+// Resposta de tokens
+export interface TokenResponse {
   access_token: string;
   refresh_token: string;
   token_type: string;
   expires_in: number;
 }
 
+// ApiResponse<TokenResponse> (usado no login e refresh)
 export interface AuthTokens {
-  data: AuthTokensData;
+  data: TokenResponse | null;
   message: string;
+}
+
+// GET /api/v1/auth/me e GET /api/v1/users
+export interface UserResponse {
+  id: string;
+  name: string;
+  email: string;
+  role: string;
+  is_active: boolean;
+  created_at: string;
 }

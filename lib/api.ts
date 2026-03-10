@@ -54,13 +54,24 @@ httpClient.interceptors.response.use(
   }
 );
 
+function getRefreshTokenFromCookie(): string | null {
+  const match = document.cookie.match(/(?:^|; )refresh_token=([^;]*)/);
+  return match ? match[1] : null;
+}
+
 async function refreshAccessToken(): Promise<boolean> {
   try {
-    const { data } = await axios.post<{ data: { access_token: string } }>(
+    const refreshToken = getRefreshTokenFromCookie();
+    if (!refreshToken) return false;
+
+    const { data } = await axios.post<{ data: { access_token: string } | null }>(
       `${httpClient.defaults.baseURL}/auth/refresh`,
-      null,
+      { refresh_token: refreshToken },
       { withCredentials: true }
     );
+
+    if (!data.data) return false;
+
     accessToken = data.data.access_token;
     return true;
   } catch {
