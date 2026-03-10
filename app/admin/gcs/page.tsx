@@ -5,6 +5,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
 import { toast } from "sonner";
 import { api } from "@/lib/api";
+import type { ApiResponse, GcResponse } from "@/types";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -38,40 +39,24 @@ import {
 } from "lucide-react";
 import { AdminSidebar } from "@/components/admin/admin-sidebar";
 
-interface GcListResponse {
-  id: string;
-  name: string;
-  isActive: boolean;
-  address: {
-    city: string;
-  };
-  meetings: {
-    dayOfWeek: string;
-  }[];
-}
-
-type GcListApiResponse = GcListResponse[] | { data: GcListResponse[] };
-
 export default function AdminGcsPage() {
   const [search, setSearch] = useState("");
-  const [toggleTarget, setToggleTarget] = useState<GcListResponse | null>(null);
+  const [toggleTarget, setToggleTarget] = useState<GcResponse | null>(null);
   const queryClient = useQueryClient();
 
-  const { data: groupsResponse, isLoading } = useQuery<GcListApiResponse>({
+  const { data: groupsResponse, isLoading } = useQuery({
     queryKey: ["admin-groups"],
     queryFn: () =>
-      api<GcListApiResponse>("/gcs", { authenticated: true }),
+      api<ApiResponse<GcResponse[]>>("/gcs", { authenticated: true }),
   });
 
-  const groups = Array.isArray(groupsResponse)
-    ? groupsResponse
-    : groupsResponse?.data ?? [];
+  const groups = groupsResponse?.data ?? [];
 
   const toggleMutation = useMutation({
-    mutationFn: ({ id, isActive }: { id: string; isActive: boolean }) =>
+    mutationFn: ({ id, is_active }: { id: string; is_active: boolean }) =>
       api(`/gcs/${id}`, {
-        method: "PATCH",
-        body: JSON.stringify({ isActive: !isActive }),
+        method: "PUT",
+        body: JSON.stringify({ is_active: !is_active }),
         authenticated: true,
       }),
     onSuccess: () => {
@@ -93,7 +78,7 @@ export default function AdminGcsPage() {
 
     return (
       g.name?.toLowerCase().includes(normalizedSearch) ||
-      g.address?.city?.toLowerCase().includes(normalizedSearch)
+      g.city?.toLowerCase().includes(normalizedSearch)
     );
   });
 
@@ -145,7 +130,6 @@ export default function AdminGcsPage() {
                     <TableRow className="bg-muted/50">
                       <TableHead>Nome</TableHead>
                       <TableHead>Cidade</TableHead>
-                      <TableHead>Dia</TableHead>
                       <TableHead>Status</TableHead>
                       <TableHead className="text-right">Ações</TableHead>
                     </TableRow>
@@ -157,13 +141,10 @@ export default function AdminGcsPage() {
                           {gc.name}
                         </TableCell>
                         <TableCell className="text-muted-foreground">
-                          {gc.address?.city}
-                        </TableCell>
-                        <TableCell className="text-muted-foreground">
-                          {gc.meetings?.[0]?.dayOfWeek ?? "—"}
+                          {gc.city}
                         </TableCell>
                         <TableCell>
-                          <StatusBadge isActive={gc.isActive} />
+                          <StatusBadge isActive={gc.is_active} />
                         </TableCell>
                         <TableCell className="space-x-1 text-right">
                           <Link href={`/admin/gcs/${gc.id}`}>
@@ -180,10 +161,10 @@ export default function AdminGcsPage() {
                             size="icon"
                             onClick={() => setToggleTarget(gc)}
                             aria-label={
-                              gc.isActive ? "Desativar GC" : "Ativar GC"
+                              gc.is_active ? "Desativar GC" : "Ativar GC"
                             }
                           >
-                            {gc.isActive ? (
+                            {gc.is_active ? (
                               <ToggleRight className="size-4 text-green-600" />
                             ) : (
                               <ToggleLeft className="size-4 text-muted-foreground" />
@@ -205,12 +186,10 @@ export default function AdminGcsPage() {
                         <div>
                           <p className="font-medium">{gc.name}</p>
                           <p className="mt-0.5 flex items-center gap-1 text-xs text-muted-foreground">
-                            <MapPin className="size-3" /> {gc.address?.city}
-                            {gc.meetings?.[0]?.dayOfWeek &&
-                              ` · ${gc.meetings[0].dayOfWeek}`}
+                            <MapPin className="size-3" /> {gc.city}
                           </p>
                         </div>
-                        <StatusBadge isActive={gc.isActive} />
+                        <StatusBadge isActive={gc.is_active} />
                       </div>
                       <div className="mt-3 flex gap-2">
                         <Link
@@ -230,7 +209,7 @@ export default function AdminGcsPage() {
                           size="sm"
                           onClick={() => setToggleTarget(gc)}
                         >
-                          {gc.isActive ? "Desativar" : "Ativar"}
+                          {gc.is_active ? "Desativar" : "Ativar"}
                         </Button>
                       </div>
                     </CardContent>
@@ -256,11 +235,11 @@ export default function AdminGcsPage() {
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>
-              {toggleTarget?.isActive ? "Desativar" : "Ativar"} GC
+              {toggleTarget?.is_active ? "Desativar" : "Ativar"} GC
             </AlertDialogTitle>
             <AlertDialogDescription>
               Tem certeza que deseja{" "}
-              {toggleTarget?.isActive ? "desativar" : "ativar"} o GC &quot;
+              {toggleTarget?.is_active ? "desativar" : "ativar"} o GC &quot;
               {toggleTarget?.name}&quot;?
             </AlertDialogDescription>
           </AlertDialogHeader>
@@ -271,7 +250,7 @@ export default function AdminGcsPage() {
                 if (toggleTarget) {
                   toggleMutation.mutate({
                     id: toggleTarget.id,
-                    isActive: toggleTarget.isActive,
+                    is_active: toggleTarget.is_active,
                   });
                 }
               }}
