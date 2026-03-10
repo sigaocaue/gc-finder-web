@@ -24,7 +24,7 @@ export function GcMapSection({
   onCloseNearbyCard,
 }: GcMapSectionProps) {
   return (
-    <section className="mx-auto -mt-4 w-full max-w-7xl px-4 pb-8 sm:px-6 lg:px-8">
+    <section className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
       <div className="relative h-[400px] sm:h-[500px] lg:h-[550px]">
         {isLoading ? (
           <Skeleton className="size-full rounded-xl" />
