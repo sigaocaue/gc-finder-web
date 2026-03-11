@@ -53,7 +53,7 @@ export default function AdminGcsPage() {
         authenticated: true,
       }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin-groups'] })
+      void queryClient.invalidateQueries({ queryKey: ['admin-groups'] })
       toast.success('Status atualizado.')
       setToggleTarget(null)
     },
@@ -69,7 +69,7 @@ export default function AdminGcsPage() {
         authenticated: true,
       }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin-groups'] })
+      void queryClient.invalidateQueries({ queryKey: ['admin-groups'] })
       toast.success('GC excluído.')
       setDeleteTarget(null)
     },
