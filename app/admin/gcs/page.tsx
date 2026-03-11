@@ -6,9 +6,7 @@ import Link from 'next/link'
 import { toast } from 'sonner'
 import { api } from '@/lib/api'
 import type { ApiResponse, GcResponse } from '@/types'
-import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
 import { Card, CardContent } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import {
@@ -29,8 +27,9 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
-import { Plus, Search, Pencil, ToggleLeft, ToggleRight, MapPin, Trash2 } from 'lucide-react'
+import { Pencil, ToggleLeft, ToggleRight, MapPin, Trash2 } from 'lucide-react'
 import { AdminSidebar } from '@/components/admin/admin-sidebar'
+import { AdminToolbar } from '@/components/admin/admin-toolbar'
 
 export default function AdminGcsPage() {
   const [search, setSearch] = useState('')
@@ -102,30 +101,17 @@ export default function AdminGcsPage() {
 
       <main className="flex-1 p-4 pt-18 lg:p-8 lg:pt-8">
         <div className="mx-auto max-w-5xl">
-          {/* Cabeçalho */}
-          <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-            <div>
-              <h1 className="text-2xl font-bold">Grupos de Crescimento</h1>
-              <p className="text-sm text-muted-foreground">{groups.length} grupos cadastrados</p>
-            </div>
-            <Link href="/admin/gcs/novo">
-              <Button className="bg-primary hover:bg-primary/90">
-                <Plus className="mr-2 size-4" /> Novo GC
-              </Button>
-            </Link>
-          </div>
-
-          {/* Busca */}
-          <div className="relative mb-4">
-            <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
-            <Input
-              placeholder="Buscar por nome ou cidade..."
-              value={search}
-              onChange={e => setSearch(e.target.value)}
-              className="pl-10"
-              aria-label="Buscar GCs"
-            />
-          </div>
+          <AdminToolbar
+            title="Grupos de Crescimento"
+            countLabel="grupos cadastrados"
+            count={groups.length}
+            createLabel="Novo GC"
+            createHref="/admin/gcs/new"
+            searchPlaceholder="Buscar por nome ou cidade..."
+            searchAriaLabel="Buscar GCs"
+            search={search}
+            setSearch={setSearch}
+          />
 
           {isLoading ? (
             <div className="space-y-3">
@@ -176,7 +162,7 @@ export default function AdminGcsPage() {
                         </TableCell>
                         <TableCell className="text-right">
                           <div className="flex items-center justify-end gap-1">
-                            <Link href={`/admin/gcs/${gc.id}`}>
+                            <Link href={`/admin/gcs/${gc.id}/edit`}>
                               <Button variant="ghost" size="icon" aria-label="Editar GC">
                                 <Pencil className="size-4" />
                               </Button>
@@ -216,7 +202,7 @@ export default function AdminGcsPage() {
                         </div>
                       </div>
                       <div className="mt-3 flex flex-wrap gap-2">
-                        <Link href={`/admin/gcs/${gc.id}`} className="flex-1">
+                        <Link href={`/admin/gcs/${gc.id}/edit`} className="flex-1">
                           <Button variant="outline" size="sm" className="w-full">
                             <Pencil className="mr-1 size-3" /> Editar
                           </Button>
