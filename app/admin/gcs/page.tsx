@@ -1,16 +1,16 @@
-"use client";
+'use client'
 
-import { useState } from "react";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import Link from "next/link";
-import { toast } from "sonner";
-import { api } from "@/lib/api";
-import type { ApiResponse, GcResponse } from "@/types";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
+import { useState } from 'react'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import Link from 'next/link'
+import { toast } from 'sonner'
+import { api } from '@/lib/api'
+import type { ApiResponse, GcResponse } from '@/types'
+import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
+import { Card, CardContent } from '@/components/ui/card'
+import { Skeleton } from '@/components/ui/skeleton'
 import {
   Table,
   TableBody,
@@ -18,7 +18,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
+} from '@/components/ui/table'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -28,59 +28,73 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
-import {
-  Plus,
-  Search,
-  Pencil,
-  ToggleLeft,
-  ToggleRight,
-  MapPin,
-} from "lucide-react";
-import { AdminSidebar } from "@/components/admin/admin-sidebar";
+} from '@/components/ui/alert-dialog'
+import { Plus, Search, Pencil, ToggleLeft, ToggleRight, MapPin, Trash2 } from 'lucide-react'
+import { AdminSidebar } from '@/components/admin/admin-sidebar'
 
 export default function AdminGcsPage() {
-  const [search, setSearch] = useState("");
-  const [toggleTarget, setToggleTarget] = useState<GcResponse | null>(null);
-  const queryClient = useQueryClient();
+  const [search, setSearch] = useState('')
+  const [toggleTarget, setToggleTarget] = useState<GcResponse | null>(null)
+  const [deleteTarget, setDeleteTarget] = useState<GcResponse | null>(null)
+  const queryClient = useQueryClient()
 
   const { data: groupsResponse, isLoading } = useQuery({
-    queryKey: ["admin-groups"],
-    queryFn: () =>
-      api<ApiResponse<GcResponse[]>>("/gcs", { authenticated: true }),
-  });
+    queryKey: ['admin-groups'],
+    queryFn: () => api<ApiResponse<GcResponse[]>>('/gcs', { authenticated: true }),
+  })
 
-  const groups = groupsResponse?.data ?? [];
+  const groups = groupsResponse?.data ?? []
 
   const toggleMutation = useMutation({
     mutationFn: ({ id, is_active }: { id: string; is_active: boolean }) =>
       api(`/gcs/${id}`, {
-        method: "PUT",
+        method: 'PUT',
         body: JSON.stringify({ is_active: !is_active }),
         authenticated: true,
       }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["admin-groups"] });
-      toast.success("Status atualizado.");
-      setToggleTarget(null);
+      queryClient.invalidateQueries({ queryKey: ['admin-groups'] })
+      toast.success('Status atualizado.')
+      setToggleTarget(null)
     },
     onError: () => {
-      toast.error("Erro ao atualizar status.");
+      toast.error('Erro ao atualizar status.')
     },
-  });
+  })
 
-  const normalizedSearch = search.trim().toLowerCase();
+  const deleteMutation = useMutation({
+    mutationFn: (id: string) =>
+      api(`/gcs/${id}`, {
+        method: 'DELETE',
+        authenticated: true,
+      }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin-groups'] })
+      toast.success('GC excluído.')
+      setDeleteTarget(null)
+    },
+    onError: () => {
+      toast.error('Erro ao excluir GC.')
+    },
+  })
 
-  const filtered = groups.filter((g) => {
+  const normalizedSearch = search.trim().toLowerCase()
+
+  const filtered = groups.filter(g => {
     if (!normalizedSearch) {
-      return true;
+      return true
     }
 
     return (
       g.name?.toLowerCase().includes(normalizedSearch) ||
-      g.city?.toLowerCase().includes(normalizedSearch)
-    );
-  });
+      g.city?.toLowerCase().includes(normalizedSearch) ||
+      g.state?.toLowerCase().includes(normalizedSearch) ||
+      g.zip_code.toLowerCase().includes(normalizedSearch) ||
+      g.description?.toLowerCase().includes(normalizedSearch) ||
+      g.neighborhood?.toLowerCase().includes(normalizedSearch) ||
+      g.street?.toLowerCase().includes(normalizedSearch)
+    )
+  })
 
   return (
     <div className="flex min-h-screen bg-background">
@@ -92,9 +106,7 @@ export default function AdminGcsPage() {
           <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <h1 className="text-2xl font-bold">Grupos de Crescimento</h1>
-              <p className="text-sm text-muted-foreground">
-                {groups.length} grupos cadastrados
-              </p>
+              <p className="text-sm text-muted-foreground">{groups.length} grupos cadastrados</p>
             </div>
             <Link href="/admin/gcs/novo">
               <Button className="bg-primary hover:bg-primary/90">
@@ -109,7 +121,7 @@ export default function AdminGcsPage() {
             <Input
               placeholder="Buscar por nome ou cidade..."
               value={search}
-              onChange={(e) => setSearch(e.target.value)}
+              onChange={e => setSearch(e.target.value)}
               className="pl-10"
               aria-label="Buscar GCs"
             />
@@ -129,40 +141,31 @@ export default function AdminGcsPage() {
                   <TableHeader>
                     <TableRow className="bg-muted/50">
                       <TableHead>Nome</TableHead>
-                      <TableHead>Cidade</TableHead>
+                      <TableHead>Localização</TableHead>
+                      <TableHead>Descrição</TableHead>
                       <TableHead>Status</TableHead>
                       <TableHead className="text-right">Ações</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {filtered.map((gc) => (
+                    {filtered.map(gc => (
                       <TableRow key={gc.id}>
                         <TableCell className="font-medium">
-                          {gc.name}
+                          <p>{gc.name}</p>
+                          <p className="text-xs text-muted-foreground">{formatGcAddress(gc)}</p>
                         </TableCell>
-                        <TableCell className="text-muted-foreground">
-                          {gc.city}
+                        <TableCell className="text-sm text-muted-foreground">
+                          {formatGcLocation(gc)}
+                        </TableCell>
+                        <TableCell className="text-sm text-muted-foreground">
+                          {formatGcDescription(gc)}
                         </TableCell>
                         <TableCell>
-                          <StatusBadge isActive={gc.is_active} />
-                        </TableCell>
-                        <TableCell className="space-x-1 text-right">
-                          <Link href={`/admin/gcs/${gc.id}`}>
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              aria-label="Editar GC"
-                            >
-                              <Pencil className="size-4" />
-                            </Button>
-                          </Link>
                           <Button
                             variant="ghost"
                             size="icon"
                             onClick={() => setToggleTarget(gc)}
-                            aria-label={
-                              gc.is_active ? "Desativar GC" : "Ativar GC"
-                            }
+                            aria-label={gc.is_active ? 'Desativar GC' : 'Ativar GC'}
                           >
                             {gc.is_active ? (
                               <ToggleRight className="size-4 text-green-600" />
@@ -170,6 +173,24 @@ export default function AdminGcsPage() {
                               <ToggleLeft className="size-4 text-muted-foreground" />
                             )}
                           </Button>
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <div className="flex items-center justify-end gap-1">
+                            <Link href={`/admin/gcs/${gc.id}`}>
+                              <Button variant="ghost" size="icon" aria-label="Editar GC">
+                                <Pencil className="size-4" />
+                              </Button>
+                            </Link>
+
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => setDeleteTarget(gc)}
+                              aria-label="Excluir GC"
+                            >
+                              <Trash2 className="size-4 text-red-600" />
+                            </Button>
+                          </div>
                         </TableCell>
                       </TableRow>
                     ))}
@@ -179,28 +200,24 @@ export default function AdminGcsPage() {
 
               {/* Cards mobile */}
               <div className="space-y-3 md:hidden">
-                {filtered.map((gc) => (
+                {filtered.map(gc => (
                   <Card key={gc.id}>
                     <CardContent className="p-4">
                       <div className="flex items-start justify-between">
                         <div>
                           <p className="font-medium">{gc.name}</p>
                           <p className="mt-0.5 flex items-center gap-1 text-xs text-muted-foreground">
-                            <MapPin className="size-3" /> {gc.city}
+                            <MapPin className="size-3" /> {formatGcLocation(gc)}
+                          </p>
+                          <p className="text-xs text-muted-foreground">{formatGcAddress(gc)}</p>
+                          <p className="mt-2 text-sm text-muted-foreground">
+                            {formatGcDescription(gc)}
                           </p>
                         </div>
-                        <StatusBadge isActive={gc.is_active} />
                       </div>
-                      <div className="mt-3 flex gap-2">
-                        <Link
-                          href={`/admin/gcs/${gc.id}`}
-                          className="flex-1"
-                        >
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            className="w-full"
-                          >
+                      <div className="mt-3 flex flex-wrap gap-2">
+                        <Link href={`/admin/gcs/${gc.id}`} className="flex-1">
+                          <Button variant="outline" size="sm" className="w-full">
                             <Pencil className="mr-1 size-3" /> Editar
                           </Button>
                         </Link>
@@ -208,8 +225,17 @@ export default function AdminGcsPage() {
                           variant="outline"
                           size="sm"
                           onClick={() => setToggleTarget(gc)}
+                          className="w-full"
                         >
-                          {gc.is_active ? "Desativar" : "Ativar"}
+                          {gc.is_active ? 'Desativar' : 'Ativar'}
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="w-full border-red-400 text-red-600 hover:bg-red-50"
+                          onClick={() => setDeleteTarget(gc)}
+                        >
+                          Excluir
                         </Button>
                       </div>
                     </CardContent>
@@ -218,9 +244,7 @@ export default function AdminGcsPage() {
               </div>
 
               {filtered.length === 0 && (
-                <div className="py-12 text-center text-muted-foreground">
-                  Nenhum GC encontrado.
-                </div>
+                <div className="py-12 text-center text-muted-foreground">Nenhum GC encontrado.</div>
               )}
             </>
           )}
@@ -228,18 +252,14 @@ export default function AdminGcsPage() {
       </main>
 
       {/* Modal de confirmação */}
-      <AlertDialog
-        open={!!toggleTarget}
-        onOpenChange={() => setToggleTarget(null)}
-      >
+      <AlertDialog open={!!toggleTarget} onOpenChange={() => setToggleTarget(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>
-              {toggleTarget?.is_active ? "Desativar" : "Ativar"} GC
+              {toggleTarget?.is_active ? 'Desativar' : 'Ativar'} GC
             </AlertDialogTitle>
             <AlertDialogDescription>
-              Tem certeza que deseja{" "}
-              {toggleTarget?.is_active ? "desativar" : "ativar"} o GC &quot;
+              Tem certeza que deseja {toggleTarget?.is_active ? 'desativar' : 'ativar'} o GC &quot;
               {toggleTarget?.name}&quot;?
             </AlertDialogDescription>
           </AlertDialogHeader>
@@ -251,7 +271,7 @@ export default function AdminGcsPage() {
                   toggleMutation.mutate({
                     id: toggleTarget.id,
                     is_active: toggleTarget.is_active,
-                  });
+                  })
                 }
               }}
             >
@@ -260,20 +280,80 @@ export default function AdminGcsPage() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+      <AlertDialog open={!!deleteTarget} onOpenChange={() => setDeleteTarget(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Excluir GC</AlertDialogTitle>
+            <AlertDialogDescription>
+              Deseja remover o GC &quot;{deleteTarget?.name}&quot;? Esta ação é irreversível.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              disabled={isLoading}
+              onClick={() => {
+                if (deleteTarget) {
+                  deleteMutation.mutate(deleteTarget.id)
+                }
+              }}
+            >
+              Excluir
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
-  );
+  )
 }
 
-function StatusBadge({ isActive }: { isActive: boolean }) {
-  return (
-    <Badge
-      className={
-        isActive
-          ? "rounded-full bg-green-100 text-xs text-green-700 dark:bg-green-900/30 dark:text-green-400"
-          : "rounded-full bg-muted text-xs text-muted-foreground"
-      }
-    >
-      {isActive ? "Ativo" : "Inativo"}
-    </Badge>
-  );
+function formatGcDescription(gc: GcResponse, maxLength = 110): string {
+  const description = gc.description?.trim()
+
+  if (!description) {
+    return 'Sem descrição'
+  }
+
+  if (description.length > maxLength) {
+    return `${description.slice(0, maxLength).trim()}…`
+  }
+
+  return description
+}
+
+function formatGcAddress(gc: GcResponse): string {
+  const addressParts: string[] = []
+
+  if (gc.street) {
+    addressParts.push(`${gc.street}${gc.number ? `, ${gc.number}` : ''}`.trim())
+  }
+
+  if (gc.neighborhood) {
+    addressParts.push(gc.neighborhood)
+  }
+
+  if (addressParts.length === 0) {
+    return 'Endereço não informado'
+  }
+
+  return addressParts.join(' • ')
+}
+
+function formatGcLocation(gc: GcResponse): string {
+  const locationParts: string[] = []
+  const cityState = [gc.city, gc.state].filter(Boolean).join(' / ')
+
+  if (cityState) {
+    locationParts.push(cityState)
+  }
+
+  if (gc.zip_code) {
+    locationParts.push(`CEP ${gc.zip_code}`)
+  }
+
+  if (locationParts.length === 0) {
+    return 'Localização incompleta'
+  }
+
+  return locationParts.join(' • ')
 }
