@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
+import { logout } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/layout/theme-toggle";
 import {
@@ -103,11 +104,14 @@ export function AdminSidebar() {
         <div className="border-t p-3">
           <div className="flex items-center justify-between">
             <ThemeToggle />
-            <Link href="/admin/login">
-              <Button variant="ghost" size="icon" aria-label="Sair">
-                <LogOut className="size-4" />
-              </Button>
-            </Link>
+            <Button
+              variant="ghost"
+              size="icon"
+              aria-label="Sair"
+              onClick={logout}
+            >
+              <LogOut className="size-4" />
+            </Button>
           </div>
         </div>
       </aside>

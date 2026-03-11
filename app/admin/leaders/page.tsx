@@ -82,7 +82,7 @@ export default function AdminLeadersPage() {
       <AdminSidebar />
 
       <main className="flex-1 p-4 pt-18 lg:p-8 lg:pt-8">
-        <div className="mx-auto max-w-5xl">
+        <div className="mx-auto">
           <AdminToolbar
             title="Líderes de GC"
             countLabel="líderes cadastrados"

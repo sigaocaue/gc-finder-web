@@ -35,14 +35,14 @@ export function AdminToolbar({
       {/* Cabeçalho */}
       <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold">{title}</h1>
-          <p className="text-sm text-muted-foreground">
+          <h1 className="text-4xl font-bold">{title}</h1>
+          <p className="text-md text-muted-foreground">
             {count} {countLabel}
           </p>
         </div>
         <Link href={createHref}>
-          <Button className="bg-primary hover:bg-primary/90">
-            <Plus className="mr-2 size-4" /> {createLabel}
+          <Button className="bg-primary hover:bg-primary/90 cursor-pointer">
+            <Plus className="mr-2 size-8" /> {createLabel}
           </Button>
         </Link>
       </div>

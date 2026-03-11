@@ -17,6 +17,17 @@ export function getAccessToken(): string | null {
   return accessToken;
 }
 
+// Limpa tokens e redireciona para a tela de login
+export function logout() {
+  accessToken = null;
+  document.cookie = "refresh_token=; path=/; max-age=0";
+
+  if (window.location.pathname.startsWith("/admin") &&
+      window.location.pathname !== "/admin/login") {
+    window.location.href = "/admin/login";
+  }
+}
+
 // Injeta o Authorization header quando autenticado
 httpClient.interceptors.request.use((config) => {
   if (config.headers.get("X-Authenticated") && accessToken) {
@@ -43,6 +54,9 @@ httpClient.interceptors.response.use(
           `Bearer ${accessToken}`;
         return httpClient(originalRequest);
       }
+
+      // Refresh falhou — sessão expirada, redireciona para login
+      logout();
     }
 
     const message =

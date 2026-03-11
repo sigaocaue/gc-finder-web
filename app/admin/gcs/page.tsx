@@ -56,7 +56,7 @@ export default function AdminGcsPage() {
       toast.success('Status atualizado.')
       setToggleTarget(null)
     },
-    onError: () => {
+    onError: (e) => {
       toast.error('Erro ao atualizar status.')
     },
   })
@@ -100,7 +100,7 @@ export default function AdminGcsPage() {
       <AdminSidebar />
 
       <main className="flex-1 p-4 pt-18 lg:p-8 lg:pt-8">
-        <div className="mx-auto max-w-5xl">
+        <div className="mx-auto">
           <AdminToolbar
             title="Grupos de Crescimento"
             countLabel="grupos cadastrados"
@@ -152,18 +152,19 @@ export default function AdminGcsPage() {
                             size="icon"
                             onClick={() => setToggleTarget(gc)}
                             aria-label={gc.is_active ? 'Desativar GC' : 'Ativar GC'}
+                            className="cursor-pointer"
                           >
                             {gc.is_active ? (
-                              <ToggleRight className="size-4 text-green-600" />
+                              <ToggleRight className="size-6 text-green-600" />
                             ) : (
-                              <ToggleLeft className="size-4 text-muted-foreground" />
+                              <ToggleLeft className="size-6 text-muted-foreground" />
                             )}
                           </Button>
                         </TableCell>
                         <TableCell className="text-right">
                           <div className="flex items-center justify-end gap-1">
                             <Link href={`/admin/gcs/${gc.id}/edit`}>
-                              <Button variant="ghost" size="icon" aria-label="Editar GC">
+                              <Button variant="ghost" size="icon" aria-label="Editar GC" className="cursor-pointer">
                                 <Pencil className="size-4" />
                               </Button>
                             </Link>
@@ -173,6 +174,7 @@ export default function AdminGcsPage() {
                               size="icon"
                               onClick={() => setDeleteTarget(gc)}
                               aria-label="Excluir GC"
+                              className="cursor-pointer"
                             >
                               <Trash2 className="size-4 text-red-600" />
                             </Button>

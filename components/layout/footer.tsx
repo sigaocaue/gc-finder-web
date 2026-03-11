@@ -6,8 +6,8 @@ export function Footer() {
   return (
     <footer className="border-t border-border bg-muted/30 py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-3">
-        <p className="text-muted-foreground flex items-center justify-center gap-1.5">
-          Desenvolvido com <Heart className="h-3.5 w-3.5 text-red-900" /> por{' '}
+        <p className="text-muted-foreground gap-1.5">
+          Desenvolvido com <Heart className="h-[1em] w-[1em] inline-block fill-red-500 text-red-900" /> por{' '}
           <a
             href="https://caue-prado.dev/"
             target="_blank"
@@ -16,7 +16,7 @@ export function Footer() {
           >
             Cauê Prado
           </a>
-          para a comunidade da{' '}
+          {' '}para a comunidade da{' '}
           <a
             href="https://lagoinhajundiai.com.br"
             target="_blank"
