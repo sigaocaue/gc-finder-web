@@ -73,7 +73,21 @@ function getRefreshTokenFromCookie(): string | null {
   return match ? match[1] : null;
 }
 
+// Evita race condition: apenas uma chamada de refresh por vez,
+// as demais aguardam o resultado da primeira
+let refreshPromise: Promise<boolean> | null = null;
+
 async function refreshAccessToken(): Promise<boolean> {
+  if (refreshPromise) return refreshPromise;
+
+  refreshPromise = executeRefresh().finally(() => {
+    refreshPromise = null;
+  });
+
+  return refreshPromise;
+}
+
+async function executeRefresh(): Promise<boolean> {
   try {
     const refreshToken = getRefreshTokenFromCookie();
     if (!refreshToken) return false;
