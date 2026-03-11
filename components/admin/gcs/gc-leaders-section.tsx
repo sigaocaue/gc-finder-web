@@ -141,8 +141,18 @@ export function GcLeadersSection(props: GcLeadersSectionProps) {
     return leaderId
   }
 
+  // Filtra líderes já vinculados/selecionados para não aparecerem no select
+  const linkedIds = new Set(
+    props.mode === 'edit'
+      ? props.linkedLeaders.map((l) => l.id)
+      : props.selectedLeaderIds
+  )
+  const unlinkedLeaders = props.availableLeaders.filter(
+    (l) => !linkedIds.has(l.id)
+  )
+
   const leaderItemsMap = Object.fromEntries(
-    props.availableLeaders.map((l) => {
+    unlinkedLeaders.map((l) => {
       const leaderPhone = l?.contacts?.find(
         (c) =>
           c?.type?.toLowerCase() === 'phone' ||
@@ -196,7 +206,7 @@ export function GcLeadersSection(props: GcLeadersSectionProps) {
             ))}
 
         {/* Select para adicionar responsável */}
-        {props.availableLeaders.length > 0 && (
+        {unlinkedLeaders.length > 0 && (
           <div className="flex items-center gap-3">
             <Select
               value={selectedLeaderId}
@@ -207,14 +217,18 @@ export function GcLeadersSection(props: GcLeadersSectionProps) {
                 <SelectValue placeholder="Selecione..." />
               </SelectTrigger>
               <SelectContent>
-                {props.availableLeaders.map((l: LeaderResponse) => {
-                  const leaderPhone = l?.contacts?.find(leaderContact => leaderContact?.type?.toLowerCase() === 'phone' || leaderContact?.type?.toLowerCase() === 'whatsapp')
-                  const label = `${l?.display_name || l.name} ${leaderPhone? '-':''} ${leaderPhone? leaderPhone?.value:''}`
+                {unlinkedLeaders.map((l: LeaderResponse) => {
+                  const leaderPhone = l?.contacts?.find(
+                    (c) =>
+                      c?.type?.toLowerCase() === 'phone' ||
+                      c?.type?.toLowerCase() === 'whatsapp'
+                  )
+                  const label = `${l?.display_name || l.name}${leaderPhone ? ` - ${leaderPhone.value}` : ''}`
                   return (
-                  <SelectItem key={l.id} value={l.id}>
-                    {label}
-                  </SelectItem>
-                )
+                    <SelectItem key={l.id} value={l.id}>
+                      {label}
+                    </SelectItem>
+                  )
                 })}
               </SelectContent>
             </Select>

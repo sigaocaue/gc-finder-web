@@ -1,9 +1,9 @@
 import { MapPin } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
-import type { GcDetailResponse } from '@/types'
+import type { GcResponse } from '@/types'
 
 interface GcLocationCardProps {
-  gc: GcDetailResponse
+  gc: GcResponse
 }
 
 export function GcLocationCard({ gc }: GcLocationCardProps) {

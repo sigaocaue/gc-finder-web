@@ -9,7 +9,6 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { api, fetchViaCep } from '@/lib/api'
 import type {
   ApiResponse,
-  GcDetailResponse,
   GcResponse,
   GcMeetingResponse,
   GcMeetingInlineCreate,
@@ -54,7 +53,7 @@ export function GcForm({ gcId }: GcFormProps) {
   const { data: gcDetail, isLoading: loadingGc } = useQuery({
     queryKey: ['specific-gc', gcId],
     queryFn: () =>
-      api<ApiResponse<GcDetailResponse>>(`/gcs/${gcId}`, { authenticated: true }),
+      api<ApiResponse<GcResponse>>(`/gcs/${gcId}`, { authenticated: true }),
     select: (r) => r.data,
     enabled: isEditing,
   })

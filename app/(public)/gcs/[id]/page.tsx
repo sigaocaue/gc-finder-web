@@ -11,14 +11,14 @@ import { GcLocationCard } from '@/components/gc/gc-location-card'
 import { GcMediaGallery } from '@/components/gc/gc-media-gallery'
 import { GcInterestCta } from '@/components/gc/gc-interest-cta'
 import { GcDetailSkeleton } from '@/components/gc/gc-detail-skeleton'
-import type { ApiResponse, GcDetailResponse } from '@/types'
+import type { ApiResponse, GcResponse } from '@/types'
 
 export default function GcDetailPage() {
   const { id } = useParams<{ id: string }>()
 
   const { data: response, isLoading } = useQuery({
     queryKey: ['gc-detail', id],
-    queryFn: () => api<ApiResponse<GcDetailResponse>>(`/gcs/${id}`),
+    queryFn: () => api<ApiResponse<GcResponse>>(`/gcs/${id}`),
   })
 
   if (isLoading) {

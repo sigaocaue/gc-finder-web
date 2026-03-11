@@ -1,6 +1,5 @@
-import { Users, Phone, Mail, MessageCircle, Star } from 'lucide-react'
+import { Users, Phone, Mail, MessageCircle } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
 import type { LeaderBrief, LeaderContactResponse } from '@/types'
 
 interface GcLeadersCardProps {
@@ -49,12 +48,6 @@ export function GcLeadersCard({ leaders }: GcLeadersCardProps) {
             <div key={leader.id} className="rounded-lg bg-muted/50 p-4">
               <div className="mb-2 flex items-center gap-2">
                 <span className="font-medium">{leader.name}</span>
-                {leader.is_primary && (
-                  <Badge className="border-warm/20 bg-warm/10 text-warm">
-                    <Star className="mr-1 size-3" />
-                    Principal
-                  </Badge>
-                )}
               </div>
 
               {leader.contacts.length > 0 && (

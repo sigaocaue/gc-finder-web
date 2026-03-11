@@ -5,12 +5,12 @@ import { motion } from 'framer-motion'
 import { ArrowLeft, MapPin, Clock } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import type { GcDetailResponse } from '@/types'
+import type { GcResponse } from '@/types'
 
 const WEEKDAYS = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado']
 
 interface GcDetailHeaderProps {
-  gc: GcDetailResponse
+  gc: GcResponse
 }
 
 export function GcDetailHeader({ gc }: GcDetailHeaderProps) {

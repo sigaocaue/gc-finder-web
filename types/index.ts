@@ -19,22 +19,26 @@ export interface GcNearbyItem extends GcMapItem {
   distance_km: number
 }
 
-// GET /api/v1/gcs (lista) e resposta base de GC
+// GET /api/v1/gcs (lista e detalhe)
 export interface GcResponse {
   id: string
   name: string
   description: string | null
   zip_code: string
-  street: string | null
+  street: string
   number: string | null
   complement: string | null
-  neighborhood: string | null
-  city: string | null
-  state: string | null
+  neighborhood: string
+  city: string
+  state: string
   latitude: number | null
   longitude: number | null
   is_active: boolean
   created_at: string
+  updated_at: string
+  leaders: LeaderBrief[]
+  meetings: GcMeetingResponse[]
+  medias: GcMediaResponse[]
 }
 
 // Contato do líder
@@ -63,7 +67,6 @@ export interface LeaderBrief {
   id: string
   name: string
   contacts: LeaderContactResponse[]
-  is_primary: boolean
 }
 
 // Encontro de GC
@@ -85,13 +88,6 @@ export interface GcMediaResponse {
   caption: string | null
   display_order: number
   created_at: string
-}
-
-// GET /api/v1/gcs/{id} (detalhe)
-export interface GcDetailResponse extends GcResponse {
-  leaders: LeaderBrief[]
-  meetings: GcMeetingResponse[]
-  medias: GcMediaResponse[]
 }
 
 // POST /api/v1/public/interest
@@ -196,7 +192,6 @@ export interface GcUpdate {
 // POST /api/v1/gcs/{id}/leaders
 export interface GcLeaderLink {
   leader_id: string
-  is_primary?: boolean
 }
 
 // POST /api/v1/gcs/{id}/meetings
