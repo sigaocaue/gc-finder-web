@@ -156,11 +156,8 @@ export function GcLeadersSection(props: GcLeadersSectionProps) {
       <CardContent className="space-y-4">
         {/* Lista de responsáveis vinculados */}
         {props.mode === 'edit'
-          ? props.linkedLeaders.map((l) => (
-              <div
-                key={l.id}
-                className="flex items-center gap-3 rounded-lg border p-3"
-              >
+          ? props.linkedLeaders.map(l => (
+              <div key={l.id} className="flex items-center gap-3 rounded-lg border p-3">
                 <span className="flex-1 text-sm font-medium">{l.name}</span>
                 <Button
                   variant="ghost"
@@ -172,14 +169,9 @@ export function GcLeadersSection(props: GcLeadersSectionProps) {
                 </Button>
               </div>
             ))
-          : props.selectedLeaderIds.map((leaderId) => (
-              <div
-                key={leaderId}
-                className="flex items-center gap-3 rounded-lg border p-3"
-              >
-                <span className="flex-1 text-sm font-medium">
-                  {getLeaderName(leaderId)}
-                </span>
+          : props.selectedLeaderIds.map(leaderId => (
+              <div key={leaderId} className="flex items-center gap-3 rounded-lg border p-3">
+                <span className="flex-1 text-sm font-medium">{getLeaderName(leaderId)}</span>
                 <Button
                   type="button"
                   variant="ghost"
@@ -195,36 +187,31 @@ export function GcLeadersSection(props: GcLeadersSectionProps) {
         {/* Select para adicionar responsável */}
         {props.availableLeaders.length > 0 && (
           <div className="flex items-center gap-3">
-            <div className="flex-1 space-y-1">
-              <Select
-                value={selectedLeaderId}
-                onValueChange={(v) => setSelectedLeaderId(v ?? '')}
-                items={leaderItemsMap}
-              >
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Selecione..." />
-                </SelectTrigger>
-                <SelectContent>
-                  {props.availableLeaders.map((l) => (
-                    <SelectItem key={l.id} value={l.id}>
-                      {l.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-1">
-              <Button
-                type="button"
-                variant="outline"
-                className="h-9 px-3.5"
-                onClick={handleAdd}
-                disabled={!selectedLeaderId}
-              >
-                <Plus className="mr-1 size-3" />{' '}
-                {props.mode === 'edit' ? 'Vincular' : 'Adicionar'}
-              </Button>
-            </div>
+            <Select
+              value={selectedLeaderId}
+              onValueChange={v => setSelectedLeaderId(v ?? '')}
+              items={leaderItemsMap}
+            >
+              <SelectTrigger className="w-full flex-1">
+                <SelectValue placeholder="Selecione..." />
+              </SelectTrigger>
+              <SelectContent>
+                {props.availableLeaders.map(l => (
+                  <SelectItem key={l.id} value={l.id}>
+                    {l.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <Button
+              type="button"
+              variant="outline"
+              className="h-8 shrink-0 px-3.5"
+              onClick={handleAdd}
+              disabled={!selectedLeaderId}
+            >
+              <Plus className="mr-1 size-3" /> {props.mode === 'edit' ? 'Vincular' : 'Adicionar'}
+            </Button>
           </div>
         )}
       </CardContent>
