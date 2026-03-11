@@ -251,7 +251,10 @@ export function GcForm({ gcId }: GcFormProps) {
 
   // --- Handlers de responsáveis (modo de edição via API) ---
   const linkLeader = async (leaderId: string) => {
-    if (!gcId) return
+    if (!gcId) {
+      return
+    }
+
     try {
       await api(`/gcs/${gcId}/leaders`, {
         method: 'POST',

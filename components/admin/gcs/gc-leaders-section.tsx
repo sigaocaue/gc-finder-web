@@ -122,7 +122,10 @@ export function GcLeadersSection(props: GcLeadersSectionProps) {
   const [selectedLeaderId, setSelectedLeaderId] = useState('')
 
   const handleAdd = () => {
-    if (!selectedLeaderId) return
+    if (!selectedLeaderId) {
+     return
+    }
+
     if (props.mode === 'edit') {
       props.onLink(selectedLeaderId)
     } else {
