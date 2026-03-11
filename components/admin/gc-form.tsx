@@ -578,6 +578,9 @@ export function GcForm({ gcId }: GcFormProps) {
                     <Select
                       value={selectedLeaderId}
                       onValueChange={(v) => setSelectedLeaderId(v ?? '')}
+                      items={Object.fromEntries(
+                        availableLeadersForCreate.map((l) => [l.id, l.name])
+                      )}
                     >
                       <SelectTrigger className="w-full">
                         <SelectValue placeholder="Selecione..." />
@@ -642,6 +645,7 @@ export function GcForm({ gcId }: GcFormProps) {
                     onValueChange={(v) =>
                       setNewInlineMeeting((p) => ({ ...p, weekday: Number(v) }))
                     }
+                    items={WEEKDAY_LABELS}
                   >
                     <SelectTrigger className="w-40">
                       <SelectValue />
@@ -731,6 +735,7 @@ export function GcForm({ gcId }: GcFormProps) {
                     onValueChange={(v) =>
                       setNewInlineMedia((p) => ({ ...p, type: v ?? 'image' }))
                     }
+                    items={MEDIA_TYPE_LABELS}
                   >
                     <SelectTrigger className="w-40">
                       <SelectValue />
@@ -838,6 +843,7 @@ export function GcForm({ gcId }: GcFormProps) {
                   onValueChange={(v) =>
                     setNewMeeting((p) => ({ ...p, weekday: Number(v) }))
                   }
+                  items={WEEKDAY_LABELS}
                 >
                   <SelectTrigger className="w-40">
                     <SelectValue />
@@ -918,6 +924,9 @@ export function GcForm({ gcId }: GcFormProps) {
                   <Select
                     value={selectedLeaderId}
                     onValueChange={(v) => setSelectedLeaderId(v ?? '')}
+                    items={Object.fromEntries(
+                      availableLeadersForEdit.map((l) => [l.id, l.name])
+                    )}
                   >
                     <SelectTrigger className="w-full">
                       <SelectValue placeholder="Selecione..." />
