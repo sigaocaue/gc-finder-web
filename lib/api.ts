@@ -122,3 +122,9 @@ export class ApiError extends Error {
     this.name = "ApiError";
   }
 }
+
+// Busca endereço pelo CEP usando a API ViaCEP
+export async function fetchViaCep(cep: string): Promise<import("@/types").ViaCepResponse> {
+  const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+  return response.json() as Promise<import("@/types").ViaCepResponse>;
+}

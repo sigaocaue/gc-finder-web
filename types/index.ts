@@ -146,3 +146,90 @@ export interface StatsCountsResponse {
   medias: number
   leader_contacts: number
 }
+
+// Payload para criação inline de encontros (usado no POST /gcs)
+export interface GcMeetingInlineCreate {
+  weekday: number
+  start_time: string
+  notes?: string
+}
+
+// Payload para criação inline de mídias (usado no POST /gcs)
+export interface GcMediaInlineCreate {
+  type: string
+  url: string
+  caption?: string
+  display_order?: number
+}
+
+// POST /api/v1/gcs
+export interface GcCreate {
+  name: string
+  description?: string
+  zip_code: string
+  street: string
+  number?: string
+  complement?: string
+  neighborhood: string
+  city: string
+  state: string
+  leaders?: string[]
+  meetings?: GcMeetingInlineCreate[]
+  medias?: GcMediaInlineCreate[]
+}
+
+// PUT /api/v1/gcs/{id}
+export interface GcUpdate {
+  name?: string
+  description?: string
+  zip_code?: string
+  street?: string
+  number?: string
+  complement?: string
+  neighborhood?: string
+  city?: string
+  state?: string
+  is_active?: boolean
+}
+
+// POST /api/v1/gcs/{id}/leaders
+export interface GcLeaderLink {
+  leader_id: string
+  is_primary?: boolean
+}
+
+// POST /api/v1/gcs/{id}/meetings
+export interface GcMeetingCreate {
+  weekday: number
+  start_time: string
+  notes?: string
+}
+
+// Resposta da API ViaCEP
+export interface ViaCepResponse {
+  cep: string
+  logradouro: string
+  complemento: string
+  bairro: string
+  localidade: string
+  uf: string
+  erro?: boolean
+}
+
+// Mapeamento de dias da semana (0=segunda..6=domingo) usado no POST /gcs
+export const WEEKDAY_LABELS: Record<number, string> = {
+  0: 'Segunda-feira',
+  1: 'Terça-feira',
+  2: 'Quarta-feira',
+  3: 'Quinta-feira',
+  4: 'Sexta-feira',
+  5: 'Sábado',
+  6: 'Domingo',
+}
+
+// Contato para criação de líder
+export interface LeaderContactCreate {
+  type: string
+  value: string
+  label?: string
+}
