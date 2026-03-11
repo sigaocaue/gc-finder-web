@@ -56,7 +56,7 @@ export default function AdminGcsPage() {
       toast.success('Status atualizado.')
       setToggleTarget(null)
     },
-    onError: (e) => {
+    onError: () => {
       toast.error('Erro ao atualizar status.')
     },
   })
