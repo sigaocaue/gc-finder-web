@@ -258,8 +258,11 @@ export function GcForm({ gcId }: GcFormProps) {
   }
 
   // CRUD de encontros no modo edição (via API)
-  const addMeeting = async () => {
-    if (!gcId) return
+  const addMeeting = async (): Promise<void> => {
+    if (!gcId) {
+      return
+    }
+
     try {
       await api(`/gcs/${gcId}/meetings`, {
         method: 'POST',
@@ -269,6 +272,10 @@ export function GcForm({ gcId }: GcFormProps) {
           notes: newMeeting.notes || undefined,
         }),
         authenticated: true,
+        headers: {
+          'Content-Type': 'application/json',
+          'accept': 'application/json',
+        }
       })
       void queryClient.invalidateQueries({ queryKey: ['gc-detail', gcId] })
       toast.success('Encontro adicionado.')
