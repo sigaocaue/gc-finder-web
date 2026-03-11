@@ -136,3 +136,8 @@ export interface UserResponse {
   is_active: boolean;
   created_at: string;
 }
+
+// GET /api/v1/stats/counts
+export interface StatsCountsResponse {
+  [key: string]: number;
+}
