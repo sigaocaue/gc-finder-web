@@ -139,7 +139,15 @@ export function GcLeadersSection(props: GcLeadersSectionProps) {
   }
 
   const leaderItemsMap = Object.fromEntries(
-    props.availableLeaders.map((l) => [l.id, l.name])
+    props.availableLeaders.map((l) => {
+      const leaderPhone = l?.contacts?.find(
+        (c) =>
+          c?.type?.toLowerCase() === 'phone' ||
+          c?.type?.toLowerCase() === 'whatsapp'
+      )
+      const label = `${l?.display_name || l.name}${leaderPhone ? ` - ${leaderPhone.value}` : ''}`
+      return [l.id, label]
+    })
   )
 
   return (
