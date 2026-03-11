@@ -126,7 +126,7 @@ export function GcMeetingsSection(props: GcMeetingsSectionProps) {
               }
               items={WEEKDAY_LABELS}
             >
-              <SelectTrigger className="w-40">
+              <SelectTrigger className="h-9 w-40">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -163,8 +163,7 @@ export function GcMeetingsSection(props: GcMeetingsSectionProps) {
           <Button
             type="button"
             variant="outline"
-            size="sm"
-            className="gap-1"
+            className="h-9 gap-1"
             onClick={handleAdd}
           >
             <Plus className="size-3" /> Adicionar
