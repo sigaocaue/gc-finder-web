@@ -38,7 +38,7 @@ export default function AdminLeadersPage() {
   const queryClient = useQueryClient()
 
   const { data: leadersResponse, isLoading } = useQuery({
-    queryKey: ['leaders'],
+    queryKey: ['all-leaders'],
     queryFn: () => api<ApiResponse<LeaderResponse[]>>('/leaders', { authenticated: true }),
   })
 
@@ -52,7 +52,7 @@ export default function AdminLeadersPage() {
         authenticated: true,
       }),
     onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: ['leaders'] })
+      void queryClient.invalidateQueries({ queryKey: ['all-leaders'] })
       toast.success('Status atualizado.')
       setToggleTarget(null)
     },
@@ -68,7 +68,7 @@ export default function AdminLeadersPage() {
         authenticated: true,
       }),
     onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: ['leaders'] })
+      void queryClient.invalidateQueries({ queryKey: ['all-leaders'] })
       toast.success('Líder excluído.')
       setDeleteTarget(null)
     },
