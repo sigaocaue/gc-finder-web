@@ -50,6 +50,7 @@ export interface LeaderContactResponse {
 export interface LeaderResponse {
   id: string
   name: string
+  display_name?: string
   bio: string | null
   photo_url: string | null
   is_active: boolean

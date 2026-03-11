@@ -196,11 +196,15 @@ export function GcLeadersSection(props: GcLeadersSectionProps) {
                 <SelectValue placeholder="Selecione..." />
               </SelectTrigger>
               <SelectContent>
-                {props.availableLeaders.map(l => (
+                {props.availableLeaders.map((l: LeaderResponse) => {
+                  const leaderPhone = l?.contacts?.find(leaderContact => leaderContact?.type?.toLowerCase() === 'phone' || leaderContact?.type?.toLowerCase() === 'whatsapp')
+                  const label = `${l?.display_name || l.name} ${leaderPhone? '-':''} ${leaderPhone? leaderPhone?.value:''}`
+                  return (
                   <SelectItem key={l.id} value={l.id}>
-                    {l.name}
+                    {label}
                   </SelectItem>
-                ))}
+                )
+                })}
               </SelectContent>
             </Select>
             <Button
