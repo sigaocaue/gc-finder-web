@@ -65,6 +65,7 @@ export function GcMapView({
         className="size-full rounded-xl"
         gestureHandling="greedy"
         disableDefaultUI={false}
+        mapTypeControl={false}
         mapId="gc-finder-map"
         onClick={() => setSelectedGc(null)}
       >
@@ -108,7 +109,7 @@ export function GcMapView({
             onCloseClick={() => setSelectedGc(null)}
             pixelOffset={[0, -40]}
           >
-            <div className="min-w-[200px] p-1">
+            <div className="min-w-50 p-1">
               <h3 className="mb-1 text-sm font-bold">{selectedGc.name}</h3>
               {(selectedGc.neighborhood || selectedGc.city) && (
                 <p className="mb-2 flex items-center gap-1 text-xs text-gray-500">

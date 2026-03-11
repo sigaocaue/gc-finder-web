@@ -25,7 +25,7 @@ export function GcMapSection({
 }: GcMapSectionProps) {
   return (
     <section className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-      <div className="relative h-[400px] sm:h-[500px] lg:h-[550px]">
+      <div className="relative h-100 sm:h-125 lg:h-137.5">
         {isLoading ? (
           <Skeleton className="size-full rounded-xl" />
         ) : (
