@@ -54,7 +54,7 @@ export function AdminSidebar() {
       >
         {/* Logo e botão fechar */}
         <div className="flex h-14 items-center justify-between border-b px-4">
-          <Link href="/admin/gcs" className="flex items-center gap-2">
+          <Link href="/admin" className="flex items-center gap-2">
             <div className="relative flex size-8 items-center justify-center rounded-full bg-muted">
               <MapPin className="size-4 text-primary" />
               <Heart
