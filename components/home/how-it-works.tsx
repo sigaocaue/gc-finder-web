@@ -1,3 +1,4 @@
+import React from "react";
 import { Search, MapPin, Users } from 'lucide-react'
 
 interface StepCardProps {
@@ -34,7 +35,7 @@ export function HowItWorks() {
             icon={<Search className="size-6" />}
             step="1"
             title="Busque pelo CEP"
-            description="Digite seu CEP e encontre o Grupo de Crescimento mais perto de você."
+            description="Digite seu CEP e encontre o GC mais perto de você."
           />
           <StepCard
             icon={<MapPin className="size-6" />}
