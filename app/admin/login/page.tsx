@@ -43,7 +43,7 @@ export default function AdminLoginPage() {
       const maxAge = response.data.expires_in * 10;
       document.cookie = `refresh_token=${response.data.refresh_token}; path=/; max-age=${maxAge}; SameSite=Lax`;
 
-      window.location.href = "/admin/gcs";
+      window.location.href = "/admin";
     } catch {
       toast.error("Email ou senha incorretos");
     } finally {
