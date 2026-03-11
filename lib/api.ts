@@ -92,7 +92,9 @@ async function executeRefresh(): Promise<boolean> {
     const refreshToken = getRefreshTokenFromCookie();
     if (!refreshToken) return false;
 
-    const { data } = await axios.post<{ data: { access_token: string } | null }>(
+    const { data } = await axios.post<{
+      data: { access_token: string; refresh_token: string; expires_in: number } | null
+    }>(
       `${httpClient.defaults.baseURL}/auth/refresh`,
       { refresh_token: refreshToken },
       { withCredentials: true }
@@ -101,6 +103,11 @@ async function executeRefresh(): Promise<boolean> {
     if (!data.data) return false;
 
     accessToken = data.data.access_token;
+
+    // Atualiza o cookie com o novo refresh token para evitar usar o token revogado
+    const maxAge = data.data.expires_in * 10;
+    document.cookie = `refresh_token=${data.data.refresh_token}; path=/; max-age=${maxAge}; SameSite=Lax`;
+
     return true;
   } catch {
     return false;
