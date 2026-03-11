@@ -194,13 +194,8 @@ export function GcLeadersSection(props: GcLeadersSectionProps) {
 
         {/* Select para adicionar responsável */}
         {props.availableLeaders.length > 0 && (
-          <div className="flex items-end gap-3">
+          <div className="flex items-center gap-3">
             <div className="flex-1 space-y-1">
-              <Label className="text-xs">
-                {props.mode === 'edit'
-                  ? 'Vincular responsável'
-                  : 'Adicionar responsável'}
-              </Label>
               <Select
                 value={selectedLeaderId}
                 onValueChange={(v) => setSelectedLeaderId(v ?? '')}
@@ -219,13 +214,10 @@ export function GcLeadersSection(props: GcLeadersSectionProps) {
               </Select>
             </div>
             <div className="space-y-1">
-              <Label className="invisible text-xs" aria-hidden="true">
-                &nbsp;
-              </Label>
               <Button
                 type="button"
                 variant="outline"
-                size="sm"
+                className="h-9 px-3.5"
                 onClick={handleAdd}
                 disabled={!selectedLeaderId}
               >
