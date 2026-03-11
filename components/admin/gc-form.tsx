@@ -72,7 +72,7 @@ export function GcForm({ gcId }: GcFormProps) {
   const queryClient = useQueryClient()
 
   const { data: gcDetail, isLoading: loadingGc } = useQuery({
-    queryKey: ['gc-detail', gcId],
+    queryKey: ['specific-gc', gcId],
     queryFn: () =>
       api<ApiResponse<GcDetailResponse>>(`/gcs/${gcId}`, { authenticated: true }),
     select: (r) => r.data,
@@ -222,7 +222,7 @@ export function GcForm({ gcId }: GcFormProps) {
         authenticated: true,
       }),
     onSuccess: (res) => {
-      void queryClient.invalidateQueries({ queryKey: ['admin-groups'] })
+      void queryClient.invalidateQueries({ queryKey: ['all-gcs'] })
       toast.success('GC criado com sucesso!')
       if (res.data) {
         router.push(`/admin/gcs/${res.data.id}/edit`)
@@ -242,8 +242,8 @@ export function GcForm({ gcId }: GcFormProps) {
         authenticated: true,
       }),
     onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: ['admin-groups'] })
-      void queryClient.invalidateQueries({ queryKey: ['gc-detail', gcId] })
+      void queryClient.invalidateQueries({ queryKey: ['all-gcs'] })
+      void queryClient.invalidateQueries({ queryKey: ['specific-gc', gcId] })
       toast.success('GC atualizado com sucesso!')
     },
     onError: () => toast.error('Erro ao atualizar GC.'),
@@ -277,7 +277,7 @@ export function GcForm({ gcId }: GcFormProps) {
           'accept': 'application/json',
         }
       })
-      void queryClient.invalidateQueries({ queryKey: ['gc-detail', gcId] })
+      void queryClient.invalidateQueries({ queryKey: ['specific-gc', gcId] })
       toast.success('Encontro adicionado.')
     } catch {
       toast.error('Erro ao adicionar encontro.')
@@ -291,7 +291,7 @@ export function GcForm({ gcId }: GcFormProps) {
         method: 'DELETE',
         authenticated: true,
       })
-      void queryClient.invalidateQueries({ queryKey: ['gc-detail', gcId] })
+      void queryClient.invalidateQueries({ queryKey: ['specific-gc', gcId] })
       toast.success('Encontro removido.')
     } catch {
       toast.error('Erro ao remover encontro.')
@@ -307,7 +307,7 @@ export function GcForm({ gcId }: GcFormProps) {
         body: JSON.stringify({ leader_id: selectedLeaderId }),
         authenticated: true,
       })
-      void queryClient.invalidateQueries({ queryKey: ['gc-detail', gcId] })
+      void queryClient.invalidateQueries({ queryKey: ['specific-gc', gcId] })
       setSelectedLeaderId('')
       toast.success('Responsável vinculado.')
     } catch {
@@ -322,7 +322,7 @@ export function GcForm({ gcId }: GcFormProps) {
         method: 'DELETE',
         authenticated: true,
       })
-      void queryClient.invalidateQueries({ queryKey: ['gc-detail', gcId] })
+      void queryClient.invalidateQueries({ queryKey: ['specific-gc', gcId] })
       toast.success('Responsável removido.')
     } catch {
       toast.error('Erro ao remover responsável.')

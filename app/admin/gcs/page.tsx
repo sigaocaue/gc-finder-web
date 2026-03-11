@@ -37,12 +37,12 @@ export default function AdminGcsPage() {
   const [deleteTarget, setDeleteTarget] = useState<GcResponse | null>(null)
   const queryClient = useQueryClient()
 
-  const { data: groupsResponse, isLoading } = useQuery({
-    queryKey: ['admin-groups'],
+  const { data: gcsResponse, isLoading } = useQuery({
+    queryKey: ['all-gcs'],
     queryFn: () => api<ApiResponse<GcResponse[]>>('/gcs', { authenticated: true }),
   })
 
-  const groups = groupsResponse?.data ?? []
+  const gcs: GcResponse[] = gcsResponse?.data ?? []
 
   const toggleMutation = useMutation({
     mutationFn: ({ id, is_active }: { id: string; is_active: boolean }) =>
@@ -52,7 +52,7 @@ export default function AdminGcsPage() {
         authenticated: true,
       }),
     onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: ['admin-groups'] })
+      void queryClient.invalidateQueries({ queryKey: ['all-gcs'] })
       toast.success('Status atualizado.')
       setToggleTarget(null)
     },
@@ -68,7 +68,7 @@ export default function AdminGcsPage() {
         authenticated: true,
       }),
     onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: ['admin-groups'] })
+      void queryClient.invalidateQueries({ queryKey: ['all-gcs'] })
       toast.success('GC excluído.')
       setDeleteTarget(null)
     },
@@ -79,19 +79,19 @@ export default function AdminGcsPage() {
 
   const normalizedSearch = search.trim().toLowerCase()
 
-  const filtered = groups.filter(g => {
+  const filtered = gcs.filter(gc => {
     if (!normalizedSearch) {
       return true
     }
 
     return (
-      g.name?.toLowerCase().includes(normalizedSearch) ||
-      g.city?.toLowerCase().includes(normalizedSearch) ||
-      g.state?.toLowerCase().includes(normalizedSearch) ||
-      g.zip_code.toLowerCase().includes(normalizedSearch) ||
-      g.description?.toLowerCase().includes(normalizedSearch) ||
-      g.neighborhood?.toLowerCase().includes(normalizedSearch) ||
-      g.street?.toLowerCase().includes(normalizedSearch)
+      gc.name?.toLowerCase().includes(normalizedSearch) ||
+      gc.city?.toLowerCase().includes(normalizedSearch) ||
+      gc.state?.toLowerCase().includes(normalizedSearch) ||
+      gc.zip_code.toLowerCase().includes(normalizedSearch) ||
+      gc.description?.toLowerCase().includes(normalizedSearch) ||
+      gc.neighborhood?.toLowerCase().includes(normalizedSearch) ||
+      gc.street?.toLowerCase().includes(normalizedSearch)
     )
   })
 
@@ -104,7 +104,7 @@ export default function AdminGcsPage() {
           <AdminToolbar
             title="Grupos de Crescimento"
             countLabel="grupos cadastrados"
-            count={groups.length}
+            count={gcs.length}
             createLabel="Novo GC"
             createHref="/admin/gcs/new"
             searchPlaceholder="Buscar por nome ou cidade..."
