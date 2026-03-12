@@ -166,7 +166,7 @@ export function GcLeadersSection(props: GcLeadersSectionProps) {
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle className="text-lg">Responsáveis</CardTitle>
+        <CardTitle className="text-lg">Responsáveis / Líderes de GC</CardTitle>
         <NewLeaderDialog
           open={props.newLeaderDialogOpen}
           onOpenChange={props.onNewLeaderDialogChange}
