@@ -160,6 +160,13 @@ export class ApiError extends Error {
 
 // Busca endereço pelo CEP usando a API ViaCEP
 export async function fetchViaCep(cep: string): Promise<import("@/types").ViaCepResponse> {
-  const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
-  return response.json() as Promise<import("@/types").ViaCepResponse>;
+  const response = await axios.get<import("@/types").ViaCepResponse>(
+    `https://viacep.com.br/ws/${cep}/json/`,
+    {
+      // Mantém comportamento semelhante ao fetch: não lançar erro automaticamente por status HTTP
+      validateStatus: () => true,
+    }
+  );
+
+  return response.data;
 }
