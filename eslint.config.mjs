@@ -32,6 +32,7 @@ export default defineConfig([
       ...react.configs["jsx-runtime"].rules,
       ...reactHooks.configs.recommended.rules,
       ...prettier.configs.recommended.rules,
+      curly: ["error", "all"],
     },
   },
 ]);
