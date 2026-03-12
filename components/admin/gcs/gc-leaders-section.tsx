@@ -207,6 +207,7 @@ export function GcLeadersSection(props: GcLeadersSectionProps) {
 
         {/* Select para adicionar responsável */}
         {unlinkedLeaders.length > 0 && (
+          <div className="rounded-lg border border-dashed p-3">
           <div className="flex items-center gap-3">
             <Select
               value={selectedLeaderId}
@@ -239,9 +240,10 @@ export function GcLeadersSection(props: GcLeadersSectionProps) {
               onClick={handleAdd}
               disabled={!selectedLeaderId}
             >
-              <Plus className="mr-1 size-3" /> {props.mode === 'edit' ? 'Vincular' : 'Adicionar'}
+              <Plus className="mr-1 size-3" /> {props.mode === 'edit' ? 'Vincular Líder ao GC' : 'Adicionar Líder ao GC'}
             </Button>
           </div>
+            </div>
         )}
       </CardContent>
     </Card>
