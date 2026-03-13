@@ -110,7 +110,7 @@ export function GcMapView({
             pixelOffset={[0, -40]}
           >
             <div className="min-w-50 p-1">
-              <h3 className="mb-1 text-sm font-bold">{selectedGc.name}</h3>
+              <h3 className="mb-1 text-sm font-bold text-gray-900">{selectedGc.name}</h3>
               {(selectedGc.neighborhood || selectedGc.city) && (
                 <p className="mb-2 flex items-center gap-1 text-xs text-gray-500">
                   <MapPin className="size-3" />

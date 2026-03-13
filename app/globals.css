@@ -140,4 +140,14 @@
     body {
         @apply bg-background text-foreground font-body;
     }
+
+    /* Força cores legíveis no InfoWindow do Google Maps (fundo branco fixo) */
+    .gm-style-iw.gm-style-iw-c {
+        background-color: #ffffff !important;
+        color: #1e293b !important;
+    }
+
+    .gm-style-iw-chr {
+        display: none !important;
+    }
 }
