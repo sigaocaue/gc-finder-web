@@ -1,5 +1,6 @@
 "use client";
 
+import { Suspense } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -95,6 +96,14 @@ function formatCep(value: string): string {
 }
 
 export default function InterestPage() {
+  return (
+    <Suspense>
+      <InterestForm />
+    </Suspense>
+  );
+}
+
+function InterestForm() {
   const searchParams = useSearchParams();
   const gcId = searchParams.get("gc_id");
   const router = useRouter();
@@ -513,3 +522,4 @@ export default function InterestPage() {
     </div>
   );
 }
+
