@@ -26,6 +26,10 @@ const nextConfig: NextConfig = {
         source: '/admin/lideres/:id/edicao',
         destination: '/admin/leaders/:id/edit',
       },
+      {
+        source: '/interesse',
+        destination: '/interest',
+      },
     ]
   }
 }

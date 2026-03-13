@@ -96,7 +96,16 @@ export interface InterestRequest {
   email: string
   phone: string
   zip_code: string
-  message?: string | null
+  age?: number
+  marital_status?: string
+  has_children?: boolean
+  availability?: string
+  is_member?: boolean
+  serves_in_ministry?: boolean
+  how_did_you_hear?: string
+  how_did_you_hear_other?: string
+  message?: string
+  gc_id?: string
 }
 
 // POST /api/v1/auth/login
@@ -129,7 +138,7 @@ export interface UserResponse {
   id: string
   name: string
   email: string
-  role: string
+  role: 'admin' | 'editor' | 'user'
   is_active: boolean
   created_at: string
 }
