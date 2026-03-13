@@ -11,6 +11,7 @@ import {
   MapPin,
   Heart,
   Users,
+  UserCog,
   Menu,
   X,
   LogOut,
@@ -19,6 +20,7 @@ import {
 const navItems = [
   { href: "/admin/gcs", label: "GCs", icon: MapPin },
   { href: "/admin/lideres", label: "Líderes", icon: Users },
+  { href: "/admin/users", label: "Usuários", icon: UserCog },
 ];
 
 export function AdminSidebar() {
