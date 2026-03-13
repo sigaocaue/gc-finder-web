@@ -239,7 +239,7 @@ export default function AdminGcsPage() {
         </div>
       </main>
 
-      {/* Modal de confirmação */}
+      {/* Modal de confirmação para desativar/ativar o GC */}
       <AlertDialog open={!!toggleTarget} onOpenChange={() => setToggleTarget(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
@@ -268,6 +268,8 @@ export default function AdminGcsPage() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Modal de confirmação para excluir o GC */}
       <AlertDialog open={!!deleteTarget} onOpenChange={() => setDeleteTarget(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
