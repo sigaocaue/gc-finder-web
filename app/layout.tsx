@@ -41,19 +41,19 @@ export const metadata: Metadata = {
     siteName: 'GC Finder',
     images: [
       {
-        url: '/favicon.svg',
-        width: 512,
-        height: 512,
-        alt: 'GC Finder Logo',
-        type: 'image/svg+xml',
+        url: '/og-image.png',
+        width: 1200,
+        height: 630,
+        alt: 'GC Finder — Encontre um Grupo de Crescimento',
+        type: 'image/png',
       },
     ],
   },
   twitter: {
-    card: 'summary',
+    card: 'summary_large_image',
     title,
     description,
-    images: ['/favicon.svg'],
+    images: ['/og-image.png'],
   },
   icons: {
     icon: [{ url: '/favicon.svg', type: 'image/svg+xml' }, '/favicon.ico'],
