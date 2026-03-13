@@ -8,7 +8,8 @@ const inter = Inter({
   subsets: ['latin'],
 })
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://gcfinder.com.br'
+const siteUrl =
+  process.env.NEXT_PUBLIC_SITE_URL ?? 'https://gc-finder.caue-prado.dev'
 const title = 'GC Finder — Encontre um Grupo de Crescimento'
 const description =
   'Encontre o Grupo de Crescimento (GC) mais próximo da sua casa. Igreja Batista da Lagoinha de Jundiaí.'
