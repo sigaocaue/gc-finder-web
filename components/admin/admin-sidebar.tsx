@@ -12,6 +12,7 @@ import {
   Heart,
   Users,
   UserCog,
+  ImagePlus,
   Menu,
   X,
   LogOut,
@@ -19,6 +20,7 @@ import {
 
 const navItems = [
   { href: "/admin/gcs", label: "GCs", icon: MapPin },
+  { href: "/admin/gcs/importar", label: "Importar por imagem", icon: ImagePlus },
   { href: "/admin/lideres", label: "Líderes", icon: Users },
   { href: "/admin/users", label: "Usuários", icon: UserCog },
 ];
@@ -82,7 +84,15 @@ export function AdminSidebar() {
         {/* Navegação */}
         <nav className="flex-1 space-y-1 p-3">
           {navItems.map((item) => {
-            const isActive = pathname.startsWith(item.href);
+            // Verifica rota exata ou sub-rota, mas ignora se outra rota mais específica já combina
+            const isActive =
+              pathname.startsWith(item.href) &&
+              !navItems.some(
+                (other) =>
+                  other.href !== item.href &&
+                  other.href.startsWith(item.href) &&
+                  pathname.startsWith(other.href)
+              );
             return (
               <Link
                 key={item.href}
