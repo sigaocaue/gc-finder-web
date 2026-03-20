@@ -68,9 +68,5 @@ Icon
 .AppleDB
 .AppleDesktop
 
-# AI Assistant
-.aiassistant
-.claude
-
 # Docker volumes
 .persistence
