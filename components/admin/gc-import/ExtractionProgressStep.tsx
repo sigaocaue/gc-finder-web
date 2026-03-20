@@ -27,7 +27,7 @@ export function ExtractionProgressStep({
         </div>
 
         <div className="space-y-2">
-          <h2 className="text-lg font-semibold">Processando imagem...</h2>
+          <h2 className="text-lg font-semibold">Processando imagens...</h2>
 
           {/* Mensagem com animação de fade */}
           <div className="min-h-[1.5rem]">

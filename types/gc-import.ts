@@ -1,5 +1,15 @@
 // Tipos do fluxo de importação de GC por imagem
 
+// Serviços OCR disponíveis no backend
+export type OcrServiceName = "easyocr" | "tesseract" | "google_documentai";
+
+// Labels para exibição no select de OCR
+export const OCR_SERVICE_LABELS: Record<OcrServiceName, string> = {
+  easyocr: "EasyOCR (padrão)",
+  tesseract: "Tesseract",
+  google_documentai: "Google Document AI",
+};
+
 export interface LeaderContactExtracted {
   type: string;
   value: string;
@@ -12,8 +22,8 @@ export interface LeaderExtracted {
 }
 
 export interface MeetingExtracted {
-  weekday: number;
-  start_time: string;
+  weekday: number; // 0=Dom, 1=Seg, 2=Ter, 3=Qua, 4=Qui, 5=Sex, 6=Sáb
+  start_time: string; // "HH:MM"
   notes: string | null;
 }
 
@@ -36,22 +46,35 @@ export interface GcExtractedData {
 export interface ImportJobStarted {
   job_id: string;
   status: string;
-  events_url: string;
-  status_url: string;
+  stream_url: string;
 }
 
 export type ImportStep = "input" | "extracting" | "review" | "success";
 
+// Evento SSE unificado — o campo "status" determina o tipo
 export interface SseStatusEvent {
-  status: string;
-  message: string;
+  status: "pending" | "processing" | "done" | "failed";
+  progress?: string;
+  result?: GcExtractedData[];
+  error?: string;
 }
 
-export interface ImportJobStatus {
-  job_id: string;
-  status: "pending" | "processing" | "done" | "error";
-  result: GcExtractedData | null;
-  error_message: string | null;
+// Evento de heartbeat (ignorar na UI)
+export interface SseHeartbeatEvent {
+  ts: string;
+}
+
+export interface GcImportState {
+  step: ImportStep;
+  jobId: string | null;
+  ocrService: OcrServiceName;
+  extractionProgress: string | null;
+  extractedDataList: GcExtractedData[];
+  savedGcIds: string[];
+  isStartingJob: boolean;
+  isSaving: boolean;
+  startError: string | null;
+  saveError: string | null;
 }
 
 // Resposta ao salvar o GC importado

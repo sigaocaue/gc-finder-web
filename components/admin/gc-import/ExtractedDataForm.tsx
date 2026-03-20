@@ -59,7 +59,8 @@ export type ExtractedDataFormValues = z.infer<typeof extractedDataSchema>;
 interface ExtractedDataFormProps {
   data: GcExtractedData;
   onSave: (data: GcExtractedData) => Promise<void>;
-  onReset: () => void;
+  onBack: () => void;
+  backLabel?: string;
   isSaving: boolean;
   saveError: string | null;
 }
@@ -67,7 +68,8 @@ interface ExtractedDataFormProps {
 export function ExtractedDataForm({
   data,
   onSave,
-  onReset,
+  onBack,
+  backLabel = "Voltar e reimportar",
   isSaving,
   saveError,
 }: ExtractedDataFormProps) {
@@ -327,11 +329,11 @@ export function ExtractedDataForm({
         <Button
           type="button"
           variant="outline"
-          onClick={onReset}
+          onClick={onBack}
           disabled={isSaving}
         >
           <ArrowLeft className="size-4" />
-          Voltar e reimportar
+          {backLabel}
         </Button>
 
         <Button type="submit" disabled={isSaving}>

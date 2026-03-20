@@ -5,19 +5,21 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { CheckCircle2, ExternalLink, ImagePlus, List } from "lucide-react";
+import type { GcExtractedData } from "@/types/gc-import";
 
 interface ImportSuccessFeedbackProps {
-  gcName: string | null;
-  savedGcId: string | null;
+  savedNames: string[];
+  savedGcIds: string[];
   onReset: () => void;
 }
 
 export function ImportSuccessFeedback({
-  gcName,
-  savedGcId,
+  savedNames,
+  savedGcIds,
   onReset,
 }: ImportSuccessFeedbackProps) {
   const router = useRouter();
+  const count = savedGcIds.length;
 
   return (
     <Card className="mx-auto max-w-lg">
@@ -31,17 +33,27 @@ export function ImportSuccessFeedback({
           <CheckCircle2 className="size-16 text-green-500" />
         </motion.div>
 
-        <div className="space-y-1">
-          <h2 className="text-lg font-semibold">GC cadastrado com sucesso!</h2>
-          {gcName && (
-            <p className="text-sm font-medium text-primary">{gcName}</p>
+        <div className="space-y-2">
+          <h2 className="text-lg font-semibold">
+            {count} GC(s) cadastrado(s) com sucesso!
+          </h2>
+          {savedNames.length > 0 && (
+            <ul className="space-y-0.5">
+              {savedNames.map((name, i) => (
+                <li key={i} className="text-sm font-medium text-primary">
+                  {name}
+                </li>
+              ))}
+            </ul>
           )}
         </div>
 
-        <div className="flex flex-col gap-2 w-full max-w-xs">
-          {savedGcId && (
+        <div className="flex w-full max-w-xs flex-col gap-2">
+          {savedGcIds.length === 1 && (
             <Button
-              onClick={() => router.push(`/admin/gcs/${savedGcId}/edit`)}
+              onClick={() =>
+                router.push(`/admin/gcs/${savedGcIds[0]}/edit`)
+              }
               className="w-full"
             >
               <ExternalLink className="size-4" />
@@ -49,13 +61,9 @@ export function ImportSuccessFeedback({
             </Button>
           )}
 
-          <Button
-            variant="outline"
-            onClick={onReset}
-            className="w-full"
-          >
+          <Button variant="outline" onClick={onReset} className="w-full">
             <ImagePlus className="size-4" />
-            Importar outro GC
+            Importar outros GCs
           </Button>
 
           <Button

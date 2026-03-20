@@ -2,35 +2,30 @@ import { api, getAccessToken } from "@/lib/api";
 import type { ApiResponse } from "@/types";
 import type {
   ImportJobStarted,
-  ImportJobStatus,
   GcExtractedData,
   GcSavedResponse,
+  OcrServiceName,
+  SseStatusEvent,
 } from "@/types/gc-import";
 
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000/api/v1";
 
-// Dispara o job de extração e retorna job_id + urls
+// Dispara o job de extração e retorna job_id + stream_url
 export async function startGcImageImport(
-  input: File | string
+  images: File[],
+  imageUrls: string[],
+  ocrService: OcrServiceName
 ): Promise<ImportJobStarted> {
-  if (typeof input === "string") {
-    // Envio por URL
-    const response = await api<ApiResponse<ImportJobStarted>>(
-      "/gcs/import/image",
-      {
-        method: "POST",
-        body: JSON.stringify({ image_url: input }),
-        authenticated: true,
-      }
-    );
-    if (!response.data) throw new Error("Falha ao iniciar importação.");
-    return response.data;
-  }
-
-  // Envio por arquivo — usa FormData
   const formData = new FormData();
-  formData.append("image", input);
+
+  // Múltiplos arquivos com o mesmo nome de campo
+  images.forEach((file) => formData.append("images", file));
+
+  // Múltiplas URLs com o mesmo nome de campo
+  imageUrls.forEach((url) => formData.append("images_urls", url));
+
+  formData.append("ocr_service", ocrService);
 
   const token = getAccessToken();
   const res = await fetch(`${API_BASE_URL}/gcs/import/image`, {
@@ -52,7 +47,7 @@ export async function startGcImageImport(
   return json.data;
 }
 
-// Salva os dados (extraídos ou editados) no banco
+// Salva UM GC (extraído ou editado) no banco — chamar uma vez por GC
 export async function saveExtractedGc(
   data: GcExtractedData
 ): Promise<GcSavedResponse> {
@@ -68,31 +63,19 @@ export async function saveExtractedGc(
   return response.data;
 }
 
-// Consulta o status atual do job (fallback de reconexão)
-export async function getJobStatus(
-  jobId: string
-): Promise<ImportJobStatus> {
-  const response = await api<ApiResponse<ImportJobStatus>>(
-    `/gcs/import/image/${jobId}`,
-    { authenticated: true }
-  );
-  if (!response.data) throw new Error("Falha ao consultar status do job.");
-  return response.data;
-}
-
 // Cria conexão SSE usando fetch + ReadableStream para suportar Authorization header
 export function createSseConnection(
-  eventsUrl: string,
+  streamUrl: string,
   handlers: {
-    onStatus: (message: string) => void;
-    onDone: (data: GcExtractedData) => void;
+    onProgress: (progress: string) => void;
+    onDone: (data: GcExtractedData[]) => void;
     onError: (message: string) => void;
   }
 ): AbortController {
   const controller = new AbortController();
   const token = getAccessToken();
 
-  const url = `${API_BASE_URL}${eventsUrl}`;
+  const url = `${API_BASE_URL}${streamUrl}`;
 
   fetch(url, {
     headers: {
@@ -130,19 +113,31 @@ export function createSseConnection(
           } else if (line.startsWith("data: ") && currentEvent) {
             const jsonStr = line.slice(6);
             try {
+              // Ignora heartbeats silenciosamente
+              if (currentEvent === "heartbeat") {
+                currentEvent = "";
+                continue;
+              }
+
               if (currentEvent === "status") {
-                const parsed = JSON.parse(jsonStr) as { message: string };
-                handlers.onStatus(parsed.message);
-              } else if (currentEvent === "done") {
-                const parsed = JSON.parse(jsonStr) as GcExtractedData;
-                handlers.onDone(parsed);
-                controller.abort();
-                return;
-              } else if (currentEvent === "error") {
-                const parsed = JSON.parse(jsonStr) as { message: string };
-                handlers.onError(parsed.message);
-                controller.abort();
-                return;
+                const parsed = JSON.parse(jsonStr) as SseStatusEvent;
+
+                if (parsed.status === "done" && parsed.result) {
+                  handlers.onDone(parsed.result);
+                  controller.abort();
+                  return;
+                }
+
+                if (parsed.status === "failed") {
+                  handlers.onError(parsed.error ?? "Erro desconhecido na extração.");
+                  controller.abort();
+                  return;
+                }
+
+                // Progresso (processing ou pending)
+                if (parsed.progress) {
+                  handlers.onProgress(parsed.progress);
+                }
               }
             } catch {
               // Ignora linhas de dados inválidas
