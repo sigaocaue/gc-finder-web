@@ -1,4 +1,4 @@
-import { api, getAccessToken } from "@/lib/api";
+import { api, httpClient, getAccessToken } from "@/lib/api";
 import type { ApiResponse } from "@/types";
 import type {
   ImportJobStarted,
@@ -10,6 +10,9 @@ import type {
 
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000/api/v1";
+
+// URL base sem o path /api/v1, para endpoints cujo path já vem completo do backend
+const API_ORIGIN = API_BASE_URL.replace(/\/api\/v\d+\/?$/, "");
 
 // Dispara o job de extração e retorna job_id + stream_url
 export async function startGcImageImport(
@@ -27,24 +30,20 @@ export async function startGcImageImport(
 
   formData.append("ocr_service", ocrService);
 
-  const token = getAccessToken();
-  const res = await fetch(`${API_BASE_URL}/gcs/import/image`, {
-    method: "POST",
-    headers: token ? { Authorization: `Bearer ${token}` } : {},
-    credentials: "include",
-    body: formData,
-  });
+  // Usa o httpClient (axios) para passar pelo interceptor de auth/refresh
+  const response = await httpClient.post<ApiResponse<ImportJobStarted>>(
+    "/gcs/import/image",
+    formData,
+    {
+      headers: {
+        "Content-Type": "multipart/form-data",
+        "X-Authenticated": "true",
+      },
+    }
+  );
 
-  if (!res.ok) {
-    const err = (await res.json().catch(() => null)) as {
-      message?: string;
-    } | null;
-    throw new Error(err?.message ?? "Falha ao iniciar importação.");
-  }
-
-  const json = (await res.json()) as ApiResponse<ImportJobStarted>;
-  if (!json.data) throw new Error("Resposta inesperada do servidor.");
-  return json.data;
+  if (!response.data.data) throw new Error("Resposta inesperada do servidor.");
+  return response.data.data;
 }
 
 // Salva UM GC (extraído ou editado) no banco — chamar uma vez por GC
@@ -75,7 +74,8 @@ export function createSseConnection(
   const controller = new AbortController();
   const token = getAccessToken();
 
-  const url = `${API_BASE_URL}${streamUrl}`;
+  // stream_url já vem com /api/v1/... do backend, usar apenas a origin
+  const url = `${API_ORIGIN}${streamUrl}`;
 
   fetch(url, {
     headers: {
