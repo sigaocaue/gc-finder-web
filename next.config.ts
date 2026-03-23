@@ -30,6 +30,10 @@ const nextConfig: NextConfig = {
         source: '/interesse',
         destination: '/interest',
       },
+      {
+        source: '/admin/gcs/importar',
+        destination: '/admin/gcs/import',
+      },
     ]
   }
 }
