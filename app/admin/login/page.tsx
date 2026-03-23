@@ -52,8 +52,8 @@ export default function AdminLoginPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-muted/40 px-4">
-      <div className="w-full max-w-md rounded-2xl bg-background p-8 shadow-lg">
+    <div className="flex min-h-screen items-center justify-center bg-[#F3E3D0] px-4">
+      <div className="w-full max-w-md rounded-2xl bg-[#D2C4B4] p-8 shadow-[0_20px_45px_rgba(17,45,78,0.2)]">
         {/* Ícone do logo */}
         <div className="mb-6 flex justify-center">
           <div className="relative flex size-20 items-center justify-center rounded-full bg-muted">
